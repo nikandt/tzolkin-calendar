@@ -38,7 +38,7 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
   };
   const dates = generateDates();
 
-  const generateNumbers = () => {
+  const generateNumbers = (): number[] => {
     const numbers = Array(260).fill(null);
     let count = 1;
 
@@ -52,7 +52,7 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
     return numbers;
   };
 
-  const numbers = generateNumbers();
+  const numbers: number[] = generateNumbers();
 
   const generateMayaNumbers = () => {
     const mayaNumbers = Array(260).fill(null);
