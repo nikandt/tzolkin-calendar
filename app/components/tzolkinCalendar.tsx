@@ -15,7 +15,7 @@ const TzolkinCalendar: React.FC = () => {
     const startDate = new Date(2024, 6, 8);
     const endDate = new Date(2025, 2, 24);
     const dates = Array(260).fill(null);
-    let currentDate = startDate;
+    const currentDate = startDate;
 
     for (let col = 0; col < 13; col++) {
       for (let row = 0; row < 20; row++) {
