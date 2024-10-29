@@ -9,11 +9,15 @@ const greyCells = new Set([
 
 const lunarCells = new Set ([]);
 
-const TzolkinCalendar: React.FC = () => {
+type TzolkinCalendarProps = {
+  dateRange: { start: string; end: string };
+};
+
+const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
 
   const generateDates = () => {
-    const startDate = new Date(2024, 6, 8);
-    const endDate = new Date(2025, 2, 24);
+    const startDate = new Date(dateRange.start.split(".").reverse().join("-"));
+    const endDate = new Date(dateRange.end.split(".").reverse().join("-"));
     const dates = Array(260).fill(null);
     const currentDate = startDate;
 
