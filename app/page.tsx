@@ -29,7 +29,7 @@ export default function Home() {
             13:20 day sequence
           </div>
           <div className="text-xl font-bold text-center tracking-wide">
-            TZOLK'IN
+            TZOLK&apos;IN
           </div>
           <div className="text-gray-700 font-semibold text-sm sm:text-base">
             {dateRanges[calendarIndex].start} - {dateRanges[calendarIndex].end}

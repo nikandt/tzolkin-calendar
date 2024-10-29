@@ -72,15 +72,14 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(14, 1fr)', // Include extra column
+        gridTemplateColumns: 'repeat(14, 1fr)', 
         gridTemplateRows: 'repeat(20, 1fr)',
         gap: '4px',
       }}
     >
-      {/* Render each row with an empty cell followed by the main cells */}
       {Array.from({ length: 20 }).map((_, rowIndex) => (
-        <>
-          {/* Empty cell for the extra column */}
+        <React.Fragment key={`row-${rowIndex}`}>
+          {/* Extra column cell */}
           <div
             key={`extra-${rowIndex}`}
             style={{
@@ -92,16 +91,13 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
               justifyContent: 'center',
               fontSize: '10px',
             }}
-          >
-            {/* Placeholder for Maya period symbols */}
-          </div>
-
-          {/* Render main cells for each row */}
+          />
+          {/* Main Tzolk'in calendar cells */}
           {dates.slice(rowIndex * 13, rowIndex * 13 + 13).map((date, index) => {
             const cellIndex = rowIndex * 13 + index;
             return (
               <div
-                key={cellIndex}
+                key={`cell-${cellIndex}`}
                 style={{
                   border: '1px solid #ccc',
                   padding: '8px',
@@ -130,7 +126,7 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
               </div>
             );
           })}
-        </>
+        </React.Fragment>
       ))}
     </div>
   );
