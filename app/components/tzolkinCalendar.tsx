@@ -7,7 +7,7 @@ const greyCells = new Set([
   218, 222, 239, 241, 260
 ]);
 
-const lunarCells = new Set ([]);
+const lunarCells: Set<number> = new Set ([]);
 
 type TzolkinCalendarProps = {
   dateRange: { start: string; end: string };
