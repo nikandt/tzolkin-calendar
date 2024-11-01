@@ -7,6 +7,30 @@ const greyCells = new Set([
   218, 222, 239, 241, 260
 ]);
 
+const m_images = [
+  '200x200_r300_jpg_1_lohikaarme.jpg',       // 1
+  '200x200_r300_jpg_2_tuuli.jpg',            // 2
+  '200x200_r300_jpg_3_yo.jpg',               // 3
+  '200x200_r300_jpg_4_siemen.jpg',           // 4
+  '200x200_r300_jpg_5_kaarme.jpg',           // 5
+  '200x200_r300_jpg_6_maailmojen_sillanrakentaja.jpg', // 6
+  '200x200_r300_jpg_7_kasi.jpg',             // 7
+  '200x200_r300_jpg_8_tahti.jpg',            // 8
+  '200x200_r300_jpg_9_kuu.jpg',              // 9
+  '200x200_r300_jpg_10_koira.jpg',           // 10
+  '200x200_r300_jpg_11_apina.jpg',           // 11
+  '200x200_r300_jpg_12_ihminen.jpg',         // 12
+  '200x200_r300_jpg_13_taivaanvaeltaja.jpg', // 13
+  '200x200_r300_jpg_14_taikuri.jpg',         // 14
+  '200x200_r300_jpg_15_kotka.jpg',           // 15
+  '200x200_r300_jpg_16_soturi.jpg',          // 16
+  '200x200_r300_jpg_17_maa.jpg',             // 17
+  '200x200_r300_jpg_18_peili.jpg',           // 18
+  '200x200_r300_jpg_19_myrsky.jpg',          // 19
+  '200x200_r300_jpg_20_aurinko.jpg'          // 20
+];
+
+
 const lunarCells: Set<number> = new Set ([]);
 
 type TzolkinCalendarProps = {
@@ -20,22 +44,33 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
     const endDate = new Date(dateRange.end.split(".").reverse().join("-"));
     const dates = Array(260).fill(null);
     const currentDate = startDate;
-
+  
     for (let col = 0; col < 13; col++) {
       for (let row = 0; row < 20; row++) {
         if (currentDate > endDate) break;
-
+  
         const day = String(currentDate.getDate()).padStart(2, '0');
         const month = String(currentDate.getMonth() + 1).padStart(2, '0');
         const year = String(currentDate.getFullYear()).slice(-2);
-        dates[row * 13 + col] = `${day}.${month}.${year}`;
         
+        const isLeapDay = currentDate.getMonth() === 1 && currentDate.getDate() === 28 &&
+                          new Date(currentDate.getFullYear(), 1, 29).getMonth() === 1;
+  
+        if (isLeapDay) {
+          dates[row * 13 + col] = `${day}-${String(day + 1)}.${month}.${year}`;
+          currentDate.setDate(currentDate.getDate() + 1);
+        } else {
+          dates[row * 13 + col] = `${day}.${month}.${year}`;
+        }
+        
+
         currentDate.setDate(currentDate.getDate() + 1);
       }
     }
-
+  
     return dates;
   };
+  
   const dates = generateDates();
 
   const generateNumbers = (): number[] => {
@@ -77,21 +112,27 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
         gap: '4px',
       }}
     >
-      {Array.from({ length: 20 }).map((_, rowIndex) => (
-        <React.Fragment key={`row-${rowIndex}`}>
-          {/* Extra column cell */}
-          <div
-            key={`extra-${rowIndex}`}
-            style={{
-              border: '1px solid #ccc',
-              height: '70px',
-              width: '70px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '10px',
-            }}
-          />
+    {Array.from({ length: 20 }).map((_, rowIndex) => (
+          <React.Fragment key={`row-${rowIndex}`}>
+            {/* Extra column cell with wave sequence image */}
+            <div
+              key={`extra-${rowIndex}`}
+              style={{
+                border: '1px solid #ccc',
+                height: '70px',
+                width: '70px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '10px',
+              }}
+            >
+              <img
+                src={`/jpg/${m_images[rowIndex]}`} // Access image based on row index
+                alt={`Wave ${rowIndex + 1}`}
+                style={{ maxWidth: '100%', maxHeight: '100%' }}
+              />
+        </div>
           {/* Main Tzolk'in calendar cells */}
           {dates.slice(rowIndex * 13, rowIndex * 13 + 13).map((date, index) => {
             const cellIndex = rowIndex * 13 + index;
