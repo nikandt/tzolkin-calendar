@@ -123,7 +123,7 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
       style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(14, minmax(0, 1fr))',
-        gridTemplateRows: 'repeat(20, minmax(0, 1fr))',
+        gridTemplateRows: 'repeat(20, minmax(36px, 1fr))',
         gap: '3px',
         width: '100%',
         height: '100%',
