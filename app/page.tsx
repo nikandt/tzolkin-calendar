@@ -5,6 +5,12 @@ import TzolkinCalendar from "./components/tzolkinCalendar";
 
 export default function Home() {
 
+  const dateRanges = [
+    { start: "08.07.2024", end: "24.03.2025" },
+    { start: "25.03.2025", end: "09.12.2025" },
+    { start: "10.12.2025", end: "26.08.2026" }
+  ];
+
   const today = new Date();
   const initialIndex = dateRanges.findIndex(r => {
     const start = new Date(r.start.split(".").reverse().join("-"));
@@ -14,12 +20,6 @@ export default function Home() {
   const [calendarIndex, setCalendarIndex] = useState(
     initialIndex >= 0 ? initialIndex : dateRanges.length - 1
   );
-
-  const dateRanges = [
-    { start: "08.07.2024", end: "24.03.2025" },
-    { start: "25.03.2025", end: "09.12.2025" },
-    { start: "10.12.2025", end: "26.08.2026" }
-  ];
 
   const handlePagination = (direction: "prev" | "next") => {
     if (direction === "prev" && calendarIndex > 0) {
