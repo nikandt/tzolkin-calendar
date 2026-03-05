@@ -13,6 +13,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+html {
+    overflow-y: hidden;   /* outer page still handles vertical scroll */
+    overflow-x: auto;     /* mobile can swipe horizontally inside iframe */
+  }
+
 ::-webkit-scrollbar {
   width: 8px; /* Width for vertical scrollbar */
   height: 8px; /* Height for horizontal scrollbar */
