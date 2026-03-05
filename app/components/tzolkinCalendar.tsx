@@ -73,6 +73,21 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
   
   const dates = generateDates();
 
+  const _now = new Date();
+  const todayStr = `${String(_now.getDate()).padStart(2,'0')}.${String(_now.getMonth()+1).padStart(2,'0')}.${String(_now.getFullYear()).slice(-2)}`;
+
+  const isToday = (date: string | null): boolean => {
+    if (!date) return false;
+    if (date === todayStr) return true;
+    if (date.includes('-')) {
+      // Leap-day cell format: "28-29.MM.YY"
+      const [firstDay, secondPart] = date.split('-');
+      const monthYear = secondPart.slice(secondPart.indexOf('.'));
+      return todayStr === firstDay + monthYear || todayStr === secondPart;
+    }
+    return false;
+  };
+
   const generateNumbers = (): number[] => {
     const numbers = Array(260).fill(null);
     let count = 1;
@@ -107,9 +122,11 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(14, 1fr)', 
-        gridTemplateRows: 'repeat(20, 1fr)',
-        gap: '4px',
+        gridTemplateColumns: 'repeat(14, minmax(0, 1fr))',
+        gridTemplateRows: 'repeat(20, minmax(0, 1fr))',
+        gap: '3px',
+        width: '100%',
+        height: '100%',
       }}
     >
     {Array.from({ length: 20 }).map((_, rowIndex) => (
@@ -119,12 +136,12 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
               key={`extra-${rowIndex}`}
               style={{
                 border: '1px solid #ccc',
-                height: '70px',
-                width: '70px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '10px',
+                overflow: 'hidden',
+                minHeight: 0,
+                minWidth: 0,
               }}
             >
               <img
@@ -141,20 +158,22 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
                 key={`cell-${cellIndex}`}
                 style={{
                   border: '1px solid #ccc',
-                  padding: '8px',
-                  height: '70px',
-                  width: '70px',
+                  padding: '2px',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '10px',
-                  backgroundColor: greyCells.has(numbers[cellIndex]) ? 'lightgrey' : 'transparent',
+                  fontSize: '8px',
+                  overflow: 'hidden',
+                  minHeight: 0,
+                  minWidth: 0,
+                  backgroundColor: isToday(dates[cellIndex]) ? '#ffe082' : greyCells.has(numbers[cellIndex]) ? 'lightgrey' : 'transparent',
+                  outline: isToday(dates[cellIndex]) ? '2px solid #f0a500' : 'none',
                   position: 'relative',
                 }}
               >
                 <div style={{ textAlign: 'center' }}>{date}</div>
-                <div style={{ textAlign: 'center', fontSize: '14px' }}>
+                <div style={{ textAlign: 'center', fontSize: '12px' }}>
                   {getMayaSymbol(mayaNumbers[cellIndex])}
                 </div>
                 <div style={{ textAlign: 'center' }}>{numbers[cellIndex]}</div>
