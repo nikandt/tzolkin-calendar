@@ -109,52 +109,40 @@ export default function Home() {
   };
 
   return (
-    <div
-      className="font-[family-name:var(--font-geist-sans)]"
-      style={{
-        height: '100vh',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '10px',
-        boxSizing: 'border-box',
-      }}
-    >
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0, marginBottom: '6px' }}>
-        <div className="text-gray-700 font-semibold text-sm">
-          13:20 day sequence
-        </div>
-        <div className="text-xl font-bold tracking-wide">
-          TZOLK&apos;IN
-        </div>
-        <div className="text-gray-700 font-semibold text-sm">
-          {dateRanges[calendarIndex].start} - {dateRanges[calendarIndex].end}
-        </div>
-      </div>
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-4 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-4 row-start-2 items-center sm:items-start">
 
-      {/* Calendar — fills all remaining vertical space */}
-      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+        <div className="flex justify-between w-full items-center mb-4">
+          <div className="text-gray-700 font-semibold text-sm sm:text-base">
+            13:20 day sequence
+          </div>
+          <div className="text-xl font-bold text-center tracking-wide">
+            TZOLK&apos;IN
+          </div>
+          <div className="text-gray-700 font-semibold text-sm sm:text-base">
+            {dateRanges[calendarIndex].start} - {dateRanges[calendarIndex].end}
+          </div>
+        </div>
+
         <TzolkinCalendar dateRange={dateRanges[calendarIndex]} />
-      </div>
 
-      {/* Pagination */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', flexShrink: 0, marginTop: '6px' }}>
-        <button
-          onClick={() => handlePagination("prev")}
-          disabled={calendarIndex === 0}
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <button
-          onClick={() => handlePagination("next")}
-          disabled={calendarIndex === dateRanges.length - 1}
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+        <div className="flex justify-between w-full mt-4">
+          <button
+            onClick={() => handlePagination("prev")}
+            disabled={calendarIndex === 0}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => handlePagination("next")}
+            disabled={calendarIndex === dateRanges.length - 1}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </main>
     </div>
   );
 }
