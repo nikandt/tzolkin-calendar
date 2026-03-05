@@ -23,9 +23,8 @@ function isLeapDay(date: Date): boolean {
   return date.getMonth() === 1 && date.getDate() === 28 && isLeapYear(date.getFullYear());
 }
 
-// Returns the last calendar day covered by the 260-kin cycle that starts on
-// startDate. Mirrors the advance logic in tzolkinCalendar.tsx exactly:
-// a leap day advances the calendar by 2 days but counts as only one kin.
+// Returns the last calendar day covered by the 260-kin cycle starting on
+// startDate. Mirrors the advance logic in tzolkinCalendar.tsx exactly.
 function getCycleEndDate(startDate: Date): Date {
   const current = new Date(startDate);
   for (let kin = 0; kin < 259; kin++) {
@@ -35,7 +34,6 @@ function getCycleEndDate(startDate: Date): Date {
       current.setDate(current.getDate() + 1);
     }
   }
-  // If the 260th kin itself is a leap day, it spans to Feb 29
   if (isLeapDay(current)) {
     return addDays(current, 1);
   }
@@ -56,9 +54,6 @@ function parseDate(str: string): Date {
 
 // ---------------------------------------------------------------------------
 // Cycle list — generated automatically from a known anchor date.
-// Covers all complete cycles from the anchor up to and including the current
-// cycle, plus one future cycle for forward navigation.
-// No manual updates needed: just leave the anchor in place forever.
 // ---------------------------------------------------------------------------
 
 const CYCLE_ANCHOR = new Date(2024, 6, 8); // 08.07.2024 — start of cycle 1
@@ -75,7 +70,6 @@ function generateCycles(): { start: string; end: string }[] {
     cycles.push({ start: formatDate(start), end: formatDate(end) });
 
     if (today <= end) {
-      // This is the current cycle — push one more for forward navigation
       const nextStart = addDays(end, 1);
       const nextEnd   = getCycleEndDate(nextStart);
       cycles.push({ start: formatDate(nextStart), end: formatDate(nextEnd) });
@@ -88,7 +82,6 @@ function generateCycles(): { start: string; end: string }[] {
   return cycles;
 }
 
-// Computed once at module load (deterministic for the same calendar day)
 const dateRanges = generateCycles();
 
 const _today = new Date();
@@ -98,7 +91,6 @@ const currentCycleIndex = dateRanges.findIndex(r => {
   const end   = parseDate(r.end);
   return _today >= start && _today <= end;
 });
-// Fallback: second-to-last (current cycle; last is always the upcoming one)
 const initialIndex = currentCycleIndex >= 0 ? currentCycleIndex : dateRanges.length - 2;
 
 // ---------------------------------------------------------------------------
@@ -117,40 +109,52 @@ export default function Home() {
   };
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-4 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-4 row-start-2 items-center sm:items-start">
-
-        <div className="flex justify-between w-full items-center mb-4">
-          <div className="text-gray-700 font-semibold text-sm sm:text-base">
-            13:20 day sequence
-          </div>
-          <div className="text-xl font-bold text-center tracking-wide">
-            TZOLK&apos;IN
-          </div>
-          <div className="text-gray-700 font-semibold text-sm sm:text-base">
-            {dateRanges[calendarIndex].start} - {dateRanges[calendarIndex].end}
-          </div>
+    <div
+      className="font-[family-name:var(--font-geist-sans)]"
+      style={{
+        height: '100vh',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '10px',
+        boxSizing: 'border-box',
+      }}
+    >
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0, marginBottom: '6px' }}>
+        <div className="text-gray-700 font-semibold text-sm">
+          13:20 day sequence
         </div>
+        <div className="text-xl font-bold tracking-wide">
+          TZOLK&apos;IN
+        </div>
+        <div className="text-gray-700 font-semibold text-sm">
+          {dateRanges[calendarIndex].start} - {dateRanges[calendarIndex].end}
+        </div>
+      </div>
 
+      {/* Calendar — fills all remaining vertical space */}
+      <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
         <TzolkinCalendar dateRange={dateRanges[calendarIndex]} />
+      </div>
 
-        <div className="flex justify-between w-full mt-4">
-          <button
-            onClick={() => handlePagination("prev")}
-            disabled={calendarIndex === 0}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => handlePagination("next")}
-            disabled={calendarIndex === dateRanges.length - 1}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      </main>
+      {/* Pagination */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexShrink: 0, marginTop: '6px' }}>
+        <button
+          onClick={() => handlePagination("prev")}
+          disabled={calendarIndex === 0}
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => handlePagination("next")}
+          disabled={calendarIndex === dateRanges.length - 1}
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
