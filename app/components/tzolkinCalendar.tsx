@@ -122,11 +122,9 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(14, minmax(0, 1fr))',
-        gridTemplateRows: 'repeat(20, minmax(36px, 1fr))',
-        gap: '3px',
-        width: '100%',
-        height: '100%',
+        gridTemplateColumns: 'repeat(14, 1fr)',
+        gridTemplateRows: 'repeat(20, 1fr)',
+        gap: '4px',
       }}
     >
     {Array.from({ length: 20 }).map((_, rowIndex) => (
@@ -136,12 +134,12 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
               key={`extra-${rowIndex}`}
               style={{
                 border: '1px solid #ccc',
+                height: '70px',
+                width: '70px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                overflow: 'hidden',
-                minHeight: 0,
-                minWidth: 0,
+                fontSize: '10px',
               }}
             >
               <img
@@ -158,22 +156,21 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
                 key={`cell-${cellIndex}`}
                 style={{
                   border: '1px solid #ccc',
-                  padding: '2px',
+                  padding: '8px',
+                  height: '70px',
+                  width: '70px',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '8px',
-                  overflow: 'hidden',
-                  minHeight: 0,
-                  minWidth: 0,
+                  fontSize: '10px',
                   backgroundColor: isToday(dates[cellIndex]) ? '#ffe082' : greyCells.has(numbers[cellIndex]) ? 'lightgrey' : 'transparent',
                   outline: isToday(dates[cellIndex]) ? '2px solid #f0a500' : 'none',
                   position: 'relative',
                 }}
               >
                 <div style={{ textAlign: 'center' }}>{date}</div>
-                <div style={{ textAlign: 'center', fontSize: '12px' }}>
+                <div style={{ textAlign: 'center', fontSize: '14px' }}>
                   {getMayaSymbol(mayaNumbers[cellIndex])}
                 </div>
                 <div style={{ textAlign: 'center' }}>{numbers[cellIndex]}</div>
