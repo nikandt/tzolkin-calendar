@@ -3,23 +3,110 @@
 import React, { useState } from "react";
 import TzolkinCalendar from "./components/tzolkinCalendar";
 
-export default function Home() {
+// ---------------------------------------------------------------------------
+// Tzolkin cycle helpers
+// ---------------------------------------------------------------------------
 
-  const dateRanges = [
-    { start: "08.07.2024", end: "24.03.2025" },
-    { start: "25.03.2025", end: "09.12.2025" },
-    { start: "10.12.2025", end: "26.08.2026" }
-  ];
+function addDays(date: Date, n: number): Date {
+  const d = new Date(date);
+  d.setDate(d.getDate() + n);
+  return d;
+}
 
+function isLeapYear(year: number): boolean {
+  return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+}
+
+// Feb 28 of a leap year: this kin spans two calendar days (28–29) in the
+// existing tzolkinCalendar.tsx rendering logic.
+function isLeapDay(date: Date): boolean {
+  return date.getMonth() === 1 && date.getDate() === 28 && isLeapYear(date.getFullYear());
+}
+
+// Returns the last calendar day covered by the 260-kin cycle that starts on
+// startDate. Mirrors the advance logic in tzolkinCalendar.tsx exactly:
+// a leap day advances the calendar by 2 days but counts as only one kin.
+function getCycleEndDate(startDate: Date): Date {
+  const current = new Date(startDate);
+  for (let kin = 0; kin < 259; kin++) {
+    if (isLeapDay(current)) {
+      current.setDate(current.getDate() + 2);
+    } else {
+      current.setDate(current.getDate() + 1);
+    }
+  }
+  // If the 260th kin itself is a leap day, it spans to Feb 29
+  if (isLeapDay(current)) {
+    return addDays(current, 1);
+  }
+  return new Date(current);
+}
+
+function formatDate(date: Date): string {
+  const day   = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year  = String(date.getFullYear());
+  return `${day}.${month}.${year}`;
+}
+
+function parseDate(str: string): Date {
+  const [day, month, year] = str.split('.').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+// ---------------------------------------------------------------------------
+// Cycle list — generated automatically from a known anchor date.
+// Covers all complete cycles from the anchor up to and including the current
+// cycle, plus one future cycle for forward navigation.
+// No manual updates needed: just leave the anchor in place forever.
+// ---------------------------------------------------------------------------
+
+const CYCLE_ANCHOR = new Date(2024, 6, 8); // 08.07.2024 — start of cycle 1
+
+function generateCycles(): { start: string; end: string }[] {
   const today = new Date();
-  const initialIndex = dateRanges.findIndex(r => {
-    const start = new Date(r.start.split(".").reverse().join("-"));
-    const end = new Date(r.end.split(".").reverse().join("-"));
-    return today >= start && today <= end;
-  });
-  const [calendarIndex, setCalendarIndex] = useState(
-    initialIndex >= 0 ? initialIndex : dateRanges.length - 1
-  );
+  today.setHours(0, 0, 0, 0);
+
+  const cycles: { start: string; end: string }[] = [];
+  let start = new Date(CYCLE_ANCHOR);
+
+  while (true) {
+    const end = getCycleEndDate(start);
+    cycles.push({ start: formatDate(start), end: formatDate(end) });
+
+    if (today <= end) {
+      // This is the current cycle — push one more for forward navigation
+      const nextStart = addDays(end, 1);
+      const nextEnd   = getCycleEndDate(nextStart);
+      cycles.push({ start: formatDate(nextStart), end: formatDate(nextEnd) });
+      break;
+    }
+
+    start = addDays(end, 1);
+  }
+
+  return cycles;
+}
+
+// Computed once at module load (deterministic for the same calendar day)
+const dateRanges = generateCycles();
+
+const _today = new Date();
+_today.setHours(0, 0, 0, 0);
+const currentCycleIndex = dateRanges.findIndex(r => {
+  const start = parseDate(r.start);
+  const end   = parseDate(r.end);
+  return _today >= start && _today <= end;
+});
+// Fallback: second-to-last (current cycle; last is always the upcoming one)
+const initialIndex = currentCycleIndex >= 0 ? currentCycleIndex : dateRanges.length - 2;
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+export default function Home() {
+  const [calendarIndex, setCalendarIndex] = useState(initialIndex);
 
   const handlePagination = (direction: "prev" | "next") => {
     if (direction === "prev" && calendarIndex > 0) {
