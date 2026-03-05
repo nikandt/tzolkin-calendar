@@ -134,7 +134,7 @@ export default function Home() {
       </div>
 
       {/* Calendar — fills all remaining vertical space */}
-      <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
         <TzolkinCalendar dateRange={dateRanges[calendarIndex]} />
       </div>
 
