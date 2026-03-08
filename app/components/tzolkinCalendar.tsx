@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { getMayaSymbol } from './mayaSymbols';
 
 const greyCells = new Set([
@@ -73,8 +75,14 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
   
   const dates = generateDates();
 
-  const _now = new Date();
-  const todayStr = `${String(_now.getDate()).padStart(2,'0')}.${String(_now.getMonth()+1).padStart(2,'0')}.${String(_now.getFullYear()).slice(-2)}`;
+  const [todayStr, setTodayStr] = useState('');
+
+  useEffect(() => {
+    const now = new Date();
+    setTodayStr(
+      `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getFullYear()).slice(-2)}`
+    );
+  }, []);
 
   const isToday = (date: string | null): boolean => {
     if (!date) return false;
