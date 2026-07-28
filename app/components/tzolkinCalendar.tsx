@@ -127,12 +127,14 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
   const mayaNumbers = generateMayaNumbers();
 
   return (
+    <div style={{ width: '100%', overflowX: 'auto' }}>
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(14, 1fr)',
+        gridTemplateColumns: 'repeat(14, minmax(48px, 1fr))',
         gridTemplateRows: 'repeat(20, 1fr)',
         gap: '4px',
+        minWidth: '700px',
       }}
     >
     {Array.from({ length: 20 }).map((_, rowIndex) => (
@@ -142,8 +144,8 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
               key={`extra-${rowIndex}`}
               style={{
                 border: '1px solid #ccc',
-                height: '70px',
-                width: '70px',
+                aspectRatio: '1',
+                width: '100%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -165,8 +167,8 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
                 style={{
                   border: '1px solid #ccc',
                   padding: '8px',
-                  height: '70px',
-                  width: '70px',
+                  aspectRatio: '1',
+                  width: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -193,6 +195,7 @@ const TzolkinCalendar: React.FC<TzolkinCalendarProps> = ({ dateRange }) => {
           })}
         </React.Fragment>
       ))}
+    </div>
     </div>
   );
 };
