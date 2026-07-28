@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import TzolkinCalendar from "./components/tzolkinCalendar";
 
 // ---------------------------------------------------------------------------
@@ -97,10 +98,17 @@ const initialIndex = currentCycleIndex >= 0 ? currentCycleIndex : dateRanges.len
 // Component
 // ---------------------------------------------------------------------------
 
-export default function Home() {
+function HomeInner() {
+  const searchParams = useSearchParams();
+  // ?static=1 on the iframe src — hides prev/next paging and always shows
+  // the current cycle only (used by the omamaya.fi embed).
+  const isStatic = searchParams.get("static") === "1";
+
   const [calendarIndex, setCalendarIndex] = useState(initialIndex);
+  const activeIndex = isStatic ? initialIndex : calendarIndex;
 
   const handlePagination = (direction: "prev" | "next") => {
+    if (isStatic) return;
     if (direction === "prev" && calendarIndex > 0) {
       setCalendarIndex(calendarIndex - 1);
     } else if (direction === "next" && calendarIndex < dateRanges.length - 1) {
@@ -114,35 +122,45 @@ export default function Home() {
 
         <div className="flex justify-between w-full items-center mb-4">
           <div className="text-gray-700 font-semibold text-sm sm:text-base">
-            13:20 day sequence
+            13:20
           </div>
           <div className="text-xl font-bold text-center tracking-wide">
             TZOLK&apos;IN
           </div>
           <div className="text-gray-700 font-semibold text-sm sm:text-base">
-            {dateRanges[calendarIndex].start} - {dateRanges[calendarIndex].end}
+            {dateRanges[activeIndex].start} - {dateRanges[activeIndex].end}
           </div>
         </div>
 
-        <TzolkinCalendar dateRange={dateRanges[calendarIndex]} />
+        <TzolkinCalendar dateRange={dateRanges[activeIndex]} />
 
-        <div className="flex justify-between w-full mt-4">
-          <button
-            onClick={() => handlePagination("prev")}
-            disabled={calendarIndex === 0}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => handlePagination("next")}
-            disabled={calendarIndex === dateRanges.length - 1}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
+        {!isStatic && (
+          <div className="flex justify-between w-full mt-4">
+            <button
+              onClick={() => handlePagination("prev")}
+              disabled={calendarIndex === 0}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => handlePagination("next")}
+              disabled={calendarIndex === dateRanges.length - 1}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeInner />
+    </Suspense>
   );
 }
