@@ -124,9 +124,11 @@ function HomeInner() {
           <div className="text-gray-700 font-semibold text-sm sm:text-base">
             13:20
           </div>
-          <div className="text-xl font-bold text-center tracking-wide">
-            TZOLK&apos;IN
-          </div>
+          {!isStatic && (
+            <div className="text-xl font-bold text-center tracking-wide">
+              TZOLK&apos;IN
+            </div>
+          )}
           <div className="text-gray-700 font-semibold text-sm sm:text-base">
             {dateRanges[activeIndex].start} - {dateRanges[activeIndex].end}
           </div>
