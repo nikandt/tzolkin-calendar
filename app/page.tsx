@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import TzolkinCalendar from "./components/tzolkinCalendar";
 
@@ -116,8 +116,28 @@ function HomeInner() {
     }
   };
 
+  // Embedded as a cross-origin iframe on omamaya.fi with a fixed height —
+  // report our real content height so the parent page can size the iframe
+  // to match instead of leaving dead space or clipping the grid.
+  useEffect(() => {
+    if (!isStatic) return;
+    function reportHeight() {
+      window.parent.postMessage(
+        { type: "tzolkin-height", height: document.body.scrollHeight },
+        "*"
+      );
+    }
+    reportHeight();
+    window.addEventListener("resize", reportHeight);
+    const timer = setTimeout(reportHeight, 300);
+    return () => {
+      window.removeEventListener("resize", reportHeight);
+      clearTimeout(timer);
+    };
+  }, [isStatic, activeIndex]);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-4 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className={`grid grid-rows-[20px_1fr_20px] items-center justify-items-center p-4 gap-4 sm:p-8 font-[family-name:var(--font-geist-sans)] ${isStatic ? '' : 'min-h-screen pb-20 sm:pb-20'}`}>
       <main className="flex flex-col gap-4 row-start-2 items-center sm:items-start">
 
         <div className="flex justify-between w-full items-center mb-4">
